@@ -39,6 +39,11 @@ public struct InjectionValues {
             dict[K.dictKey] = newValue
         }
     }
+    
+    /// Remove item from the dictionary and go back to using the defaultValues for that key.
+    public mutating func resetToDefault<K>(key: K.Type) where K : InjectionKey {
+        dict[K.dictKey] = nil
+    }
 }
 
 /// Conform to this  and you can then add `@Injection` wrapped properties to your class

@@ -6,6 +6,8 @@ Read the [blog post about it](https://blog.human-friendly.com/how-does-the-swift
 
 This hasn't been tested in any real project yet and it does use a Swift compiler feature that isn't officially supported (see the blog post for details). The property wrapper could be left out if needed it just wouldn't be quite as nice.
 
+Be aware that the property wrapper uses a compiler feature that is not officially supported (it was included as a possible future extension of the Property Wrappers Swift Evolution proposal). However even in the worst case if the feature is removed it should be possible to repace all the uses of the `@Injection` property wrapper with a computed var, that could mostly be done with a search and replace but would probably just need the type adding in each location.
+
 Currently there is a small test suite covering all the happy cases. I have a mind to create another test file for all the cases that shouldn't compile to ensure that is the case. They would then be commented out so as not to fail builds but could be periodically checked in case any of them do build (and then lead to undesirable behaviour).
 
 It may well be that rather than have it as an external dependency you instead just drop the file into your project as a single file library (might build quicker that way than pulling the package from git)/

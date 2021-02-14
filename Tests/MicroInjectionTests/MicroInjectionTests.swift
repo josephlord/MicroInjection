@@ -1,19 +1,19 @@
 import XCTest
 @testable import MicroInjection
 
-class Foo {
+fileprivate class Foo {
     let text: String
     init(text: String) {
         self.text = text
     }
 }
 
-struct AKey : InjectionKey {
+fileprivate struct AKey : InjectionKey {
     static var defaultValue = "a"
 }
 
 extension InjectionValues {
-    var a: String {
+    fileprivate var a: String {
         get { self[AKey.self] }
         set { self[AKey.self] = newValue }
     }
@@ -128,6 +128,23 @@ final class MicroInjectionTests: XCTestCase {
         XCTAssertEqual(injection.a, "A")
         XCTAssertEqual(hasCalledCount, 0)
     }
+    
+    func testExtendInjectionResetValue() {
+        var injection = InjectionValues()
+        injection.a = "A"
+        injection.resetToDefault(key: AKey.self)
+        XCTAssertEqual(injection.a, "a")
+        XCTAssertEqual(injection[AKey.self], "a")
+    }
+    
+// I would like to be able to make this work but don't currently know a
+// mechanism to support structs being Injectable. This is a nice to have if
+// anyone has a solution it would be great.
+//    func injectableStruct() {
+//        struct Baz : Injectable {
+//            let injection = InjectionValues()
+//        }
+//    }
     
     static var allTests = [
         ("testDefaultValue", testDefaultValue),
