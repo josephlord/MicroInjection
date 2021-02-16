@@ -1,6 +1,6 @@
 # MicroInjection
 
-A tiny (~80 lines including comments and whitespace) dependency injection framework taking the same approach as the SwiftUI environment.
+A tiny (~100 lines including comments and whitespace) dependency injection framework taking the same approach as the SwiftUI environment.
 
 Read the [blog post about it](https://blog.human-friendly.com/how-does-the-swiftui-environment-work-and-can-it-be-used-outside-swiftui-for-dependency-injection).
 
