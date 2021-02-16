@@ -17,4 +17,4 @@ jobs:
       run: swift build -v
     - name: Run tests
       run: swift test -v
-    container: swift:5.2-bionic
+    container: swift:nightly-focal
