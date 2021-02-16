@@ -27,6 +27,20 @@ final class MicroInjectionTests: XCTestCase {
         let injection = InjectionValues()
         XCTAssertEqual(injection[TestKey.self], 5)
     }
+
+    func testDefaultValueComputed() {
+        struct TestKey : InjectionKey {
+            static var lastValue = 0
+            static var defaultValue: Int {
+                let next = lastValue + 5
+                lastValue = next
+                return next
+            }
+        }
+        let injection = InjectionValues()
+        XCTAssertEqual(injection[TestKey.self], 5)
+        XCTAssertEqual(injection[TestKey.self], 10)
+    }
     
     func testSetValue() {
         struct TestKey : InjectionKey {
@@ -136,6 +150,36 @@ final class MicroInjectionTests: XCTestCase {
         XCTAssertEqual(injection.a, "a")
         XCTAssertEqual(injection[AKey.self], "a")
     }
+
+//  It isn't supported to use a a member to set a computed override
+// although it would be possible if further extensions were added to the InjectionValues it isn't recommended.
+//    func testExtendInjectionSetValueClosure() {
+//        var injection = InjectionValues()
+//        injection.a = { "A" }
+//        XCTAssertEqual(injection.a, "A")
+//        XCTAssertEqual(injection[AKey.self], "A")
+//    }
+
+    func testExtendInjectionSetValueSubscriptClosure() {
+        var injection = InjectionValues()
+        injection[AKey.self] = { "A" }
+        XCTAssertEqual(injection.a, "A")
+        XCTAssertEqual(injection[AKey.self], "A")
+    }
+
+    func testPropertyWrapperComputed() {
+        class Bar : Injectable {
+            init(injection: InjectionValues) {
+                self.injection = injection
+            }
+            let injection: InjectionValues
+            @Injection(\.a) var a
+        }
+        var injection = InjectionValues()
+        injection[AKey.self] = { "A" }
+        let bar = Bar(injection: injection)
+        XCTAssertEqual(bar.a, "A")
+    }
     
 // I would like to be able to make this work but don't currently know a
 // mechanism to support structs being Injectable. This is a nice to have if
@@ -148,6 +192,7 @@ final class MicroInjectionTests: XCTestCase {
     
     static var allTests = [
         ("testDefaultValue", testDefaultValue),
+        ("testDefaultValueComputed", testDefaultValueComputed),
         ("testSetValue", testSetValue),
         ("testDefaultObject", testDefaultObject),
         ("testSetObject", testSetObject),
@@ -158,6 +203,8 @@ final class MicroInjectionTests: XCTestCase {
         ("testPropertyWrapperStored", testPropertyWrapperStored),
         ("testCallForUnstoredNil", testCallForUnstoredNil),
         ("testCallForUnstoredReturn", testCallForUnstoredReturn),
-        ("testCallForUnstoredNoCallWhenStored", testCallForUnstoredNoCallWhenStored)
+        ("testCallForUnstoredNoCallWhenStored", testCallForUnstoredNoCallWhenStored),
+        ("testExtendInjectionSetValueSubscriptClosure", testExtendInjectionSetValueSubscriptClosure),
+        ("testPropertyWrapperComputed", testPropertyWrapperComputed),
     ]
 }

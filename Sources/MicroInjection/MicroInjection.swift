@@ -19,14 +19,14 @@ public struct InjectionValues {
         self.callForUnstoredValues = callForUnstoredValues
     }
 
-    private var dict: [String: Any] = [:]
+    private var dict: [String: () -> (Any) ] = [:]
 
     /// You can call this directly but much nicer to extend InjectionValues and add a computed property to
     /// get/set it for you which is anyway required to get the `@Injection`property wrapper working
     public subscript<K>(key: K.Type) -> K.Value where K : InjectionKey {
         get {
             // If this force unwrap ever fails this whole design is wrong
-            let storedValue = dict[K.dictKey].map { $0 as! K.Value }
+            let storedValue = dict[K.dictKey].map { $0() }.map { $0 as! K.Value }
             if let unstoredValueClosure = callForUnstoredValues,
                storedValue == nil,
                let closureResult = unstoredValueClosure(key) {
@@ -36,8 +36,16 @@ public struct InjectionValues {
             return storedValue ?? K.defaultValue
         }
         set {
-            dict[K.dictKey] = newValue
+            dict[K.dictKey] = { newValue as Any }
         }
+    }
+
+    /// This subscript variant allows you to override with a closue so that differnent values can be computed each time if you want.
+    /// This subscirpt should be used directly in general where you want a non-default computed value
+    /// The getter is of essentially no value and should not be used, generally the one directly returing the value should be used
+    public subscript<K>(key: K.Type) -> () -> (K.Value) where K : InjectionKey {
+        get { return { self[key] } }
+        set { dict[K.dictKey] = newValue }
     }
     
     /// Remove item from the dictionary and go back to using the defaultValues for that key.
