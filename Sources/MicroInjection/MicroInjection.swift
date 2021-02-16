@@ -21,6 +21,8 @@ public struct InjectionValues {
         self.callForUnstoredValues = callForUnstoredValues
     }
 
+    // The storage for the overrides. Consider and test performance of two separate dictionaries with values and
+    // closures. For now wrap values in a closure
     private var dict: [String: () -> (Any) ] = [:]
 
     /// You can call this directly but much nicer to extend InjectionValues and add a computed property to
@@ -44,11 +46,15 @@ public struct InjectionValues {
 
     /// This allows you to override with a closue so that differnent values can be computed each time if you want.
     /// This subscirpt should be used where you want a non-default computed value
+    /// - Parameters:
+    ///   - key: The key you want to override the default value of (or replace current stored value of)
+    ///   - closure: A closure returning an instance of the correct type
     public mutating func set<K>(key: K.Type, _ closure: @escaping () -> (K.Value)) where K : InjectionKey {
         dict[K.dictKey] = closure
     }
     
     /// Remove item from the dictionary and go back to using the defaultValues for that key.
+    /// - Parameter key: The key to remove the stored information for. The defaultValue of the Key type will be used until the key is updated again
     public mutating func resetToDefault<K>(key: K.Type) where K : InjectionKey {
         dict[K.dictKey] = nil
     }
@@ -75,6 +81,13 @@ public protocol Injectable : class {
         keyPath = key
     }
 
+    /// This is where the magic happens. Look at this to understand how the `@Injection` actually works. Do not call this directly.
+    ///
+    /// When the wrapped value is unavailable this (unnofficially supported Swift - note _enclosingInstance) is called instead allowing the instance containing
+    /// the `@Injection` wrapped property to be accessible to be able to read from the injection property of the enclosing type to get the required object.
+    ///
+    /// Note: Not intended to be called directly. Just access the `@Injection` wrapped property as if it is normal read only property and the magic will happen
+    /// automatically
     @inlinable public static subscript<OuterSelf : Injectable> (
         _enclosingInstance instance: OuterSelf,
         wrapped wrappedKeyPath: KeyPath<OuterSelf, Value>,
