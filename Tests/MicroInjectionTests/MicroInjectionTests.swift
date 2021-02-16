@@ -151,18 +151,10 @@ final class MicroInjectionTests: XCTestCase {
         XCTAssertEqual(injection[AKey.self], "a")
     }
 
-//  It isn't supported to use a a member to set a computed override
-// although it would be possible if further extensions were added to the InjectionValues it isn't recommended.
-//    func testExtendInjectionSetValueClosure() {
-//        var injection = InjectionValues()
-//        injection.a = { "A" }
-//        XCTAssertEqual(injection.a, "A")
-//        XCTAssertEqual(injection[AKey.self], "A")
-//    }
 
-    func testExtendInjectionSetValueSubscriptClosure() {
+    func testExtendInjectionSetValueClosure() {
         var injection = InjectionValues()
-        injection[AKey.self] = { "A" }
+        injection.set(key: AKey.self) { "A" }
         XCTAssertEqual(injection.a, "A")
         XCTAssertEqual(injection[AKey.self], "A")
     }
@@ -176,7 +168,7 @@ final class MicroInjectionTests: XCTestCase {
             @Injection(\.a) var a
         }
         var injection = InjectionValues()
-        injection[AKey.self] = { "A" }
+        injection.set(key: AKey.self) { "A" }
         let bar = Bar(injection: injection)
         XCTAssertEqual(bar.a, "A")
     }
@@ -204,7 +196,7 @@ final class MicroInjectionTests: XCTestCase {
         ("testCallForUnstoredNil", testCallForUnstoredNil),
         ("testCallForUnstoredReturn", testCallForUnstoredReturn),
         ("testCallForUnstoredNoCallWhenStored", testCallForUnstoredNoCallWhenStored),
-        ("testExtendInjectionSetValueSubscriptClosure", testExtendInjectionSetValueSubscriptClosure),
+        ("testExtendInjectionSetValueClosure", testExtendInjectionSetValueClosure),
         ("testPropertyWrapperComputed", testPropertyWrapperComputed),
     ]
 }
