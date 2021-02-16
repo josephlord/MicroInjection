@@ -17,4 +17,4 @@ jobs:
       run: swift build -v
     - name: Run tests
       run: swift test -v
-    container: swift:nightly-focal
+    container: swift:5.3-focal
