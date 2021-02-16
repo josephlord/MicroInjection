@@ -4,6 +4,8 @@ A tiny (~80 lines including comments and whitespace) dependency injection framew
 
 Read the [blog post about it](https://blog.human-friendly.com/how-does-the-swiftui-environment-work-and-can-it-be-used-outside-swiftui-for-dependency-injection).
 
+![Swift](https://github.com/josephlord/MicroInjection/workflows/Swift/badge.svg?branch=main)
+
 This hasn't been tested in any real project yet and it does use a Swift compiler feature that isn't officially supported (see the blog post for details). The property wrapper could be left out if needed it just wouldn't be quite as nice.
 
 Be aware that the property wrapper uses a compiler feature that is not officially supported (it was included as a possible future extension of the Property Wrappers Swift Evolution proposal). However even in the worst case if the feature is removed it should be possible to repace all the uses of the `@Injection` property wrapper with a computed var, that could mostly be done with a search and replace but would probably just need the type adding in each location.
