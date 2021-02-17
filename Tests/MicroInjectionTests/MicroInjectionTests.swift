@@ -1,5 +1,5 @@
 import XCTest
-@testable import MicroInjection
+import MicroInjection
 
 fileprivate class Foo {
     let text: String
