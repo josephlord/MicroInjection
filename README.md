@@ -14,7 +14,7 @@ Currently there is a small test suite covering all the happy cases. There is ano
 
 It may well be that rather than have it as an external dependency you instead just drop the file into your project as a single file library (might build quicker that way than pulling the package from git).
 
-See the [License.md](license.md) file for information on licensing.
+See the [LICENSE.md](LICENSE.md) file for information on licensing.
 
 ## Help wanted
 
