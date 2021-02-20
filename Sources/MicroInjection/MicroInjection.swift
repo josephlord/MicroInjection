@@ -15,22 +15,21 @@ public struct InjectionValues {
     /// Create new empty environment
     /// The normal behaviour is for any values that aren't in the stored dictionary just to return the defaultValue
     /// from the key type itself. Optionally you can pass a closure to handle unstored values. If it returns a value
-    /// the value must be of the correct type for the ke
+    /// the value must be of the correct type for the key.
     /// This is mostly for testing so that you can ensure only the keys you expect to be accessed are accessed
     public init(callForUnstoredValues: ((Any) -> Any?)? = nil) {
         self.callForUnstoredValues = callForUnstoredValues
     }
 
-    // The storage for the overrides. Consider and test performance of two separate dictionaries with values and
-    // closures. For now wrap values in a closure
-    private var dict: [String: () -> (Any) ] = [:]
+    // Did consider a dictionary of closures but unnecessary layoer of complication
+    private var dict: [String: Any] = [:]
 
     /// You can call this directly but much nicer to extend InjectionValues and add a computed property to
     /// get/set it for you which is anyway required to get the `@Injection`property wrapper working
     public subscript<K>(key: K.Type) -> K.Value where K : InjectionKey {
         get {
             // If this force unwrap ever fails this whole design is wrong
-            let storedValue = dict[K.dictKey].map { $0() as! K.Value }
+            let storedValue = dict[K.dictKey].map { $0 as! K.Value }
             if let unstoredValueClosure = callForUnstoredValues,
                storedValue == nil,
                let closureResult = unstoredValueClosure(key) {
@@ -40,17 +39,8 @@ public struct InjectionValues {
             return storedValue ?? K.defaultValue
         }
         set {
-            dict[K.dictKey] = { newValue as Any }
+            dict[K.dictKey] = newValue
         }
-    }
-
-    /// This allows you to override with a closue so that differnent values can be computed each time if you want.
-    /// This subscirpt should be used where you want a non-default computed value
-    /// - Parameters:
-    ///   - key: The key you want to override the default value of (or replace current stored value of)
-    ///   - closure: A closure returning an instance of the correct type
-    public mutating func set<K>(key: K.Type, _ closure: @escaping () -> (K.Value)) where K : InjectionKey {
-        dict[K.dictKey] = closure
     }
     
     /// Remove item from the dictionary and go back to using the defaultValues for that key.
