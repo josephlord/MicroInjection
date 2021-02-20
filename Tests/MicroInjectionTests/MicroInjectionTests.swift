@@ -152,26 +152,29 @@ final class MicroInjectionTests: XCTestCase {
     }
 
 
-    func testExtendInjectionSetValueClosure() {
-        var injection = InjectionValues()
-        injection.set(key: AKey.self) { "A" }
-        XCTAssertEqual(injection.a, "A")
-        XCTAssertEqual(injection[AKey.self], "A")
-    }
-
-    func testPropertyWrapperComputed() {
-        class Bar : Injectable {
-            init(injection: InjectionValues) {
-                self.injection = injection
-            }
-            let injection: InjectionValues
-            @Injection(\.a) var a
-        }
-        var injection = InjectionValues()
-        injection.set(key: AKey.self) { "A" }
-        let bar = Bar(injection: injection)
-        XCTAssertEqual(bar.a, "A")
-    }
+// The functionality to set an overriding closure has been removed. It could potentially
+// be readded in the future but I think it is an unnecessary level of complication.
+// Just because something can be done doesn't mean it should be done.
+//    func testExtendInjectionSetValueClosure() {
+//        var injection = InjectionValues()
+//        injection.set(key: AKey.self) { "A" }
+//        XCTAssertEqual(injection.a, "A")
+//        XCTAssertEqual(injection[AKey.self], "A")
+//    }
+//
+//    func testPropertyWrapperComputed() {
+//        class Bar : Injectable {
+//            init(injection: InjectionValues) {
+//                self.injection = injection
+//            }
+//            let injection: InjectionValues
+//            @Injection(\.a) var a
+//        }
+//        var injection = InjectionValues()
+//        injection.set(key: AKey.self) { "A" }
+//        let bar = Bar(injection: injection)
+//        XCTAssertEqual(bar.a, "A")
+//    }
     
 // I would like to be able to make this work but don't currently know a
 // mechanism to support structs being Injectable. This is a nice to have if
@@ -196,7 +199,5 @@ final class MicroInjectionTests: XCTestCase {
         ("testCallForUnstoredNil", testCallForUnstoredNil),
         ("testCallForUnstoredReturn", testCallForUnstoredReturn),
         ("testCallForUnstoredNoCallWhenStored", testCallForUnstoredNoCallWhenStored),
-        ("testExtendInjectionSetValueClosure", testExtendInjectionSetValueClosure),
-        ("testPropertyWrapperComputed", testPropertyWrapperComputed),
     ]
 }
