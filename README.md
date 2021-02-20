@@ -1,6 +1,6 @@
 # MicroInjection
 
-A tiny (~100 lines including comments and whitespace) dependency injection framework taking the same approach as the SwiftUI environment.
+A tiny (40 lines or ~100 lines including comments and whitespace) dependency injection framework inspired by the SwiftUI environment.
 
 Read the [blog post about it](https://blog.human-friendly.com/how-does-the-swiftui-environment-work-and-can-it-be-used-outside-swiftui-for-dependency-injection).
 
@@ -14,10 +14,8 @@ Currently there is a small test suite covering all the happy cases. There is ano
 
 It may well be that rather than have it as an external dependency you instead just drop the file into your project as a single file library (might build quicker that way than pulling the package from git).
 
-Regarding license I haven't decided yet, let me know if you are planning to use it. Unless I regard your purpose or organisation as evil I'll grant you a very broad license if you want. Feel free to experment before requesting the license to distribute the code.
+See the [License.md](license.md) file for information on licensing.
 
 ## Help wanted
-
-API naming improvement suggestions. I would like other eyes on it if possible before stabilising it for a 1.0 release before March 2021.
 
 If you can see a way to allow the property wrapper to be used on structs and enums that is the additional feature that I'm looking for.
