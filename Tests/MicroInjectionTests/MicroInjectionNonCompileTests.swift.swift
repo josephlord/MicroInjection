@@ -8,7 +8,8 @@ fileprivate class Foo {
     }
 }
 
-fileprivate struct AKey : InjectionKey {
+fileprivate struct AKey : @preconcurrency InjectionKey {
+    @MainActor
     static var defaultValue = "a"
 }
 
