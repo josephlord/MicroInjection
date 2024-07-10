@@ -51,7 +51,7 @@ public struct InjectionValues {
 }
 
 /// Conform to this  and you can then add `@Injection` wrapped properties to your class
-public protocol Injectable : class {
+public protocol Injectable : AnyObject {
     /// This is where the `@Injection` properties will actually look up their values. You will often want to
     /// inject this in the init. You can also create an empty one, expose a mutable var or even have this implemetned with a computed var
     /// potentially to access a shared app injection if you want.

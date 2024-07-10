@@ -1,7 +1,7 @@
 import XCTest
 import MicroInjection
 
-fileprivate class Foo {
+fileprivate final class Foo : Sendable{
     let text: String
     init(text: String) {
         self.text = text
@@ -9,7 +9,7 @@ fileprivate class Foo {
 }
 
 fileprivate struct AKey : InjectionKey {
-    static var defaultValue = "a"
+    static let defaultValue = "a"
 }
 
 extension InjectionValues {
@@ -19,18 +19,20 @@ extension InjectionValues {
     }
 }
 
-final class MicroInjectionTests: XCTestCase {
+final class MicroInjectionTests: XCTestCase, @unchecked Sendable {
     func testDefaultValue() {
         struct TestKey : InjectionKey {
-            static var defaultValue = 5
+            static let defaultValue = 5
         }
         let injection = InjectionValues()
         XCTAssertEqual(injection[TestKey.self], 5)
     }
 
     func testDefaultValueComputed() {
-        struct TestKey : InjectionKey {
+        struct TestKey : @preconcurrency InjectionKey {
+            @MainActor
             static var lastValue = 0
+            @MainActor
             static var defaultValue: Int {
                 let next = lastValue + 5
                 lastValue = next
@@ -44,7 +46,7 @@ final class MicroInjectionTests: XCTestCase {
     
     func testSetValue() {
         struct TestKey : InjectionKey {
-            static var defaultValue = 5
+            static let defaultValue = 5
         }
         var injection = InjectionValues()
         injection[TestKey.self] = 8
@@ -53,7 +55,7 @@ final class MicroInjectionTests: XCTestCase {
     
     func testDefaultObject() {
         struct TestKey : InjectionKey {
-            static var defaultValue = Foo(text: "default")
+            static let defaultValue = Foo(text: "default")
         }
         let injection = InjectionValues()
         XCTAssertEqual(injection[TestKey.self].text, "default")
@@ -61,7 +63,7 @@ final class MicroInjectionTests: XCTestCase {
     
     func testSetObject() {
         struct TestKey : InjectionKey {
-            static var defaultValue = Foo(text: "default")
+            static let defaultValue = Foo(text: "default")
         }
         var injection = InjectionValues()
         injection[TestKey.self] = Foo(text: "Updated")
@@ -153,7 +155,7 @@ final class MicroInjectionTests: XCTestCase {
 
 
 // The functionality to set an overriding closure has been removed. It could potentially
-// be readded in the future but I think it is an unnecessary level of complication.
+// be re-added in the future but I think it is an unnecessary level of complication.
 // Just because something can be done doesn't mean it should be done.
 //    func testExtendInjectionSetValueClosure() {
 //        var injection = InjectionValues()
@@ -185,7 +187,7 @@ final class MicroInjectionTests: XCTestCase {
 //        }
 //    }
     
-    static var allTests = [
+    static let allTests = [
         ("testDefaultValue", testDefaultValue),
         ("testDefaultValueComputed", testDefaultValueComputed),
         ("testSetValue", testSetValue),
